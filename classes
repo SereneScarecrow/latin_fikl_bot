@@ -1,0 +1,91 @@
+class Noun:
+    def __init__(self, token, lemma, translation, case, gender, number):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+        self.case = case
+        self.gender = gender
+        self.number = number
+
+    def get_full_info(self):
+        """Информация о слове"""
+        info = f"'{self.token} инфо: {self.lemma}, {self.translation}, case={self.case}, gender={self.gender}, number={self.number}"
+        return info.title()
+
+
+class Verb:
+    def __init__(self, token, lemma, translation, mood, number, person, tense, verbform,  voice):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+        self.mood = mood
+        self.number = number
+        self.person = person
+        self.tense = tense
+        self.verbform = verbform
+        self.voice = voice
+
+
+class Conj:
+    def __init__(self, token, lemma, translation):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+
+
+class Adv:
+    def __init__(self, token, lemma, translation):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+
+
+class Punct:
+    def __init__(self, punct):
+        self.punct = punct
+
+
+def classification(a):
+    if (a[3] == 'NOUN') or (a[3] == 'PROPN') or (a[3] == 'ADJ') or (a[3] == 'PRON'):
+        a[0] = Noun(a[1], a[2], 'translation', *[i for i in a[4]])
+        return print(f"{a[0].lemma}")
+    if a[3] == 'VERB':
+        a[0] = Verb(a[1],a[2], 'translation', *[i for i in a[4]])
+        return print(f"{a[0].lemma}")
+    if a[3] == 'CCONJ':
+        a[0] = Conj(a[1], 'translation')
+        return print(f"{a[0].lemma}")
+    if a[3] == 'ADJ':
+        a[0] = Adv(a[1], 'translation')
+        return print(f"{a[0].lemma}")
+    if a[3] == 'PUNKT':
+        a[0] = Adv(a[1], 'punkt')
+        return print(f"{a[0].lemma}")
+
+"""
+for i in range(len(doc)-1):
+    if type(doc[i]) == Noun and type(doc[i+1]) == Noun:
+        if doc[i].case == doc[i+1].case == Acc:
+            print(f' can be Acc duplex {doc[i]} + {doc[i+1]}')
+
+"""
+razbor = '1, fac, facio, VERB, Mood=Imp|Number=Sing|Person=2|Tense=Pres|Verbform=Fin|Voice=Act \n 2, mi, meus, ADJ, Case=Voc|Gender=Masc|Number=Sing'
+
+a = []
+t = razbor.split('\n')
+for i in t:
+    l = i.split(', ')
+    a.append(l)
+
+for j in a:
+  j[-1] = j[-1].replace('|', '=')
+  s = j[-1].split('=')
+  s = s[1::2]
+  j[-1] = s
+
+print(a)
+
+for i in a:
+    print(classification(i))
+
+print(a[1][0].get_full_info())
