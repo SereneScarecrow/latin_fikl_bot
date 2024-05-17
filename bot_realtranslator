@@ -1,0 +1,135 @@
+#!pip install telebot
+#!pip install requests
+#!pip install https://huggingface.co/latincy/la_core_web_lg/resolve/main/la_core_web_lg-any-py3-none-any.whl
+#!pip install googletrans==3.1.0a0
+
+import telebot
+import requests
+from telebot import types
+import spacy
+from spacy.morphology import Morphology
+from googletrans import Translator
+
+# Создаем переводчик
+translator = Translator()
+
+# Задаем исходные язык и целевой язык
+src = 'la'
+dest = 'ru'
+
+nlp = spacy.load('la_core_web_lg')
+
+bot = telebot.TeleBot('6725473706:AAHeymN9rL2t2YGLwNTfxDQa6f8NI6AKzqA')
+
+#классы
+class Noun:
+    def __init__(self, token, lemma, translation, case, gender, number):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+        self.case = case
+        self.gender = gender
+        self.number = number
+
+    def get_full_info(self):
+        """Информация о слове"""
+        info = f"'{self.token} инфо: {self.lemma}, {self.translation}, case={self.case}, gender={self.gender}, number={self.number}"
+        return info.title()
+
+
+class Verb:
+    def __init__(self, token, lemma, translation, mood, number, person, tense, verbform,  voice):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+        self.mood = mood
+        self.number = number
+        self.person = person
+        self.tense = tense
+        self.verbform = verbform
+        self.voice = voice
+
+
+class Conj:
+    def __init__(self, token, lemma, translation):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+
+
+class Adv:
+    def __init__(self, token, lemma, translation):
+        self.token = token
+        self.lemma = lemma
+        self.translation = translation
+
+
+class Punct:
+    def __init__(self, punct):
+        self.punct = punct
+
+
+def classification(a):
+    if (a[3] == 'NOUN') or (a[3] == 'PROPN') or (a[3] == 'ADJ') or (a[3] == 'PRON'):
+        a[0] = Noun(a[1], a[2], 'translation', *[i for i in a[4]])
+        return print(f"{a[0].lemma}")
+    if a[3] == 'VERB':
+        a[0] = Verb(a[1],a[2], 'translation', *[i for i in a[4]])
+        return print(f"{a[0].lemma}")
+    if a[3] == 'CCONJ':
+        a[0] = Conj(a[1], 'translation')
+        return print(f"{a[0].lemma}")
+    if a[3] == 'ADJ':
+        a[0] = Adv(a[1], 'translation')
+        return print(f"{a[0].lemma}")
+    if a[3] == 'PUNKT':
+        a[0] = Adv(a[1], 'punkt')
+        return print(f"{a[0].lemma}")
+
+
+# функции бота
+
+# разбор
+def razbor1(doc):
+  razbor = ""
+  for i in range(len(doc)):
+              if doc[i].pos_ != 'PUNCT':
+                forma = doc[i].text
+                lem = doc[i].lemma_
+                razbor += f'{doc[i].text},  {doc[i].lemma_},  {doc[i].pos_},  {doc[i].morph}'
+                perevform = translator.translate(forma, src=src, dest=dest).text
+                perevlem = translator.translate(lem, src=src, dest=dest).text
+                razbor += f'\nЛемма - *{perevlem}*. Предполагаемый перевод формы - *{perevform}*.\n'
+  return razbor
+
+@bot.message_handler(commands=['start'])
+def start_message(message):
+    user_id = message.from_user.id
+    pressStartButton = 'Кнопка старт'
+
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    latinButton = types.KeyboardButton('ЛАТЫНЬ')
+    markup.add(latinButton)
+
+    bot.send_message(message.chat.id, "Напишите своё предложение на латыни!",
+                     parse_mode='html', reply_markup=markup)
+
+
+@bot.message_handler(content_types=['text'])
+def lalala(message):
+    if message.chat.type == 'private':
+        if message.text == 'ЛАТЫНЬ':
+            bot.send_message(message.chat.id, 'Можете написать слово, словосочетание или предложение на латыни, а мы постараемся его перевести.')
+        else:
+            user_id = message.from_user.id
+            doc = nlp(message.text)
+
+            perevtext = translator.translate(doc, src=src, dest=dest).text
+
+
+
+            bot.send_message(message.chat.id, "Сначала вы увидите перевод всего предложения, а потом пословный морфологический разбор и предполагаемые переводы леммы и формы слова в предложении. \n" 
+                             + "\nПредполагаемый перевод от Google Translate: \n" + f"*{perevtext}*" + "\n \n" + razbor1(doc), parse_mode="Markdown")
+
+
+bot.polling(none_stop=True)
