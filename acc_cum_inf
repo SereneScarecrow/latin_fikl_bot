@@ -1,0 +1,29 @@
+#accusativus cum infinitivo 
+
+def acc_inf(a):
+    s = ''
+    acc_inf_constr = []
+    for i in range(len(a)-1):
+        for j in range(len(a)):
+            if a[i][0].class.name == 'Verb' and a[i][0].mood == 'Inf' and a[i][0].voice == 'Act':
+                if a[j][0].class.name == 'Noun' and a[j][0].pad == 'Acc':
+                    if a[i][0].number == a[j][0].number:
+                        s = a[i][0].token + ' ' + a[j][0].token
+                        acc_inf_constr.append(s)
+                        s = ''
+    return acc_inf_constr
+
+#nominativus cum infinitivo 
+
+def nom_inf(a):
+    s = ''
+    nom_inf_constr = []
+    for i in range(len(a)-1):
+        for j in range(len(a)):
+            if a[i][0].class.name == 'Verb' and a[i][0].mood == 'Inf' and a[i][0].voice == 'Pas':
+                if a[j][0].class.name == 'Noun' and a[j][0].pad == 'Nom':
+                    if a[i][0].number == a[j][0].number:
+                        s = a[i][0].token + ' ' + a[j][0].token
+                        nom_inf_constr.append(s)
+                        s = ''
+    return nom_inf_constr
