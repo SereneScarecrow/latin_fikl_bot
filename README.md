@@ -40,7 +40,7 @@ classbot.py, googletranslator, working_latin_bot -- рабочие версии 
 
 latin_constr (анализ конструкций и классы по частям речи):
 
-- acc_cum_inf
+- acc_cum_inf, acc_nom_duplex
 
 - classes
 
