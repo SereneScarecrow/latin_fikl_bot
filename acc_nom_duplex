@@ -1,0 +1,28 @@
+
+#accusativus duplex
+
+def acc_du(a):
+    s = ''
+    acc_constr = []
+    for i in range(len(a)-1):
+        if a[i][0].__class__.__name__ == 'Noun' and a[i+1][0].__class__.__name__ == 'Noun':
+            if a[i][0].pad == 'Acc' and a[i+1][0].pad == 'Acc':
+                if a[i][0].number == a[i+1][0].number:
+                    s = a[i][0].token + ' ' + a[i+1][0].token
+                    acc_constr.append(s)
+                    s = ''
+    return acc_constr
+
+#nominativus duplex
+
+def nom_du(a):
+    s = ''
+    nom_constr = []
+    for i in range(len(a)-1):
+        if a[i][0].__class__.__name__ == 'Noun' and a[i+1][0].__class__.__name__ == 'Noun':
+            if a[i][0].pad == 'Nom' and a[i+1][0].pad == 'Nom':
+                if a[i][0].number == a[i+1][0].number and a[i][0].gender == a[i+1][0].gender:
+                    s = a[i][0].token + ' ' + a[i+1][0].token
+                    nom_constr.append(s)
+                    s = ''
+    return nom_constr
