@@ -26,7 +26,25 @@
 
 
 Структура репозитория:
-nothing here yet :(
+
+main -- работающий код бота, документация
+
+
+bot_code (более или менее работающие версии бота с разной начинкой):
+
+
+- almost_working_verion_latin_bot, bot1, bot_2_with translation, bot_latin translator
+classbot.py, googletranslator, working_latin_bot -- рабочие версии кода бота
+
+- itogbot.py -- финальный бот, также есть в main
+
+latin_constr (анализ конструкций и классы по частям речи):
+
+- acc_cum_inf
+
+- classes
+
+
 
 Как запустить код:
 nothing here yet :(
