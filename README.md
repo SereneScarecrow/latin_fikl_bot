@@ -33,4 +33,4 @@ nothing here yet :(
 
 
 Ссылки на ресурсы, откуда был взят код:
-https://habr.com/ru/articles/659329/ -- код тг бота
+https://habr.com/ru/articles/659329/ -- изначальный код тг бота
